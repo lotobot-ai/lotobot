@@ -18,6 +18,13 @@ const validTokens = {
     createdAt: new Date().toISOString(),
     isAdmin: true
   },
+  // Token de administrador fixo mais forte
+  'ADM_LOTOBOT_252023@#$': {
+    expiry: new Date(2099, 11, 31).toISOString(), // Válido até 31/12/2099
+    plan: 'admin',
+    createdAt: new Date().toISOString(),
+    isAdmin: true
+  },
   // Token: {expiry, plan}
   'DEMO123': {
     expiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 dias
@@ -73,11 +80,11 @@ app.get('/', (req, res) => {
 // Endpoint para validar tokens
 app.post('/validate-token', (req, res) => {
   const { token } = req.body;
- 
+  
   if (!token) {
     return res.status(400).json({ valid: false, message: 'Token não fornecido' });
   }
- 
+  
   // Verificar se o token existe e não expirou
   if (validTokens[token] && new Date(validTokens[token].expiry) > new Date()) {
     return res.json({
@@ -87,33 +94,33 @@ app.post('/validate-token', (req, res) => {
       isAdmin: validTokens[token].isAdmin || false
     });
   }
- 
+  
   return res.json({ valid: false, message: 'Token inválido ou expirado' });
 });
 
 // Endpoint para criar tokens (protegido por chave de API)
 app.post('/create-token', (req, res) => {
   const { apiKey, planType, durationDays } = req.body;
- 
+  
   // Verificar chave de API
   if (apiKey !== API_SECRET) {
     return res.status(401).json({ success: false, message: 'Chave de API inválida' });
   }
- 
+  
   // Gerar token único
   const token = generateUniqueToken();
- 
+  
   // Calcular data de expiração
   const expiry = new Date();
   expiry.setDate(expiry.getDate() + (durationDays || 30));
- 
+  
   // Armazenar token
   validTokens[token] = {
     expiry: expiry.toISOString(),
     plan: planType || 'basic',
     createdAt: new Date().toISOString()
   };
- 
+  
   return res.json({
     success: true,
     token,
@@ -155,11 +162,11 @@ app.post('/create-customer-token', (req, res) => {
 // Endpoint para listar todos os tokens (protegido)
 app.get('/list-tokens', (req, res) => {
   const { apiKey } = req.query;
- 
+  
   if (apiKey !== API_SECRET) {
     return res.status(401).json({ success: false, message: 'Chave de API inválida' });
   }
- 
+  
   return res.json({
     success: true,
     tokens: validTokens
@@ -169,18 +176,18 @@ app.get('/list-tokens', (req, res) => {
 // Endpoint para revogar um token (protegido)
 app.post('/revoke-token', (req, res) => {
   const { apiKey, token } = req.body;
- 
+  
   if (apiKey !== API_SECRET) {
     return res.status(401).json({ success: false, message: 'Chave de API inválida' });
   }
- 
+  
   if (!validTokens[token]) {
     return res.status(404).json({ success: false, message: 'Token não encontrado' });
   }
- 
+  
   // Expirar o token imediatamente
   validTokens[token].expiry = new Date(0).toISOString();
- 
+  
   return res.json({
     success: true,
     message: 'Token revogado com sucesso'
@@ -201,3 +208,4 @@ function generateUniqueToken() {
 app.listen(port, () => {
   console.log(`Servidor de validação de tokens rodando na porta ${port}`);
 });
+

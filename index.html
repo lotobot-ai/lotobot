@@ -48,53 +48,7 @@
     </div>
     
     <div class="logs" id="logs"></div>
-  </div>  
-  
-
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script>
-  // Verificar autenticação ao carregar a página
-document.addEventListener('DOMContentLoaded', function() {
-  // Verificar se existe token válido
-  const token = localStorage.getItem('lotobot_token');
-  const tokenExpiry = localStorage.getItem('lotobot_token_expiry');
-  
-  // Se não tiver token ou estiver expirado, redirecionar para login
-  if (!token || !tokenExpiry || new Date(tokenExpiry) <= new Date()) {
-    window.location.href = 'login.html';
-    return;
-  }
-  
-  // Adicionar verificação periódica de validade do token
-  setInterval(checkTokenValidity, 60000); // Verificar a cada minuto
-  
-  // O resto da inicialização continuará normalmente
-  const lastUpdate = localStorage.getItem('lastUpdate');
-  if (lastUpdate) {
-    setLastUpdate(lastUpdate);
-  }
-});
-
-// Função para verificar validade do token periodicamente
-function checkTokenValidity() {
-  const tokenExpiry = localStorage.getItem('lotobot_token_expiry');
-  
-  if (!tokenExpiry || new Date(tokenExpiry) <= new Date()) {
-    // Token expirado - redirecionar para login
-    alert('Sua sessão expirou. Por favor, faça login novamente.');
-    window.location.href = 'login.html';
-  }
-}  
-
-  // SEU CÓDIGO ORIGINAL COMEÇA AQUI
-  const CONFIGS = {
-    'Mega-Sena': { numbers: 6, maxNum: 60 },
-    'Lotofácil': { numbers: 15, maxNum: 25 },
-    'Lotomania': { numbers: 20, maxNum: 100 },
-  };
-  // ... resto do seu código original ...
-  </script>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
